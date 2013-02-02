@@ -5,18 +5,18 @@
 
 <section>
   <h1>IonMonkey</h1>
-    <footer>by @evilpies (Tom Schuster) and <br/> @nbpname (Nicolas Pierron)</footer>
+    <footer>by @evilpies (Tom Schuster) and <br/> @nbp (Nicolas B. Pierron)</footer>
 </section>
 
 <section>
-  <h1>YA-JS-JIT-C?</h1>
-    <footer>by @evilpies (Tom Schuster) and <br/> @nbpname (Nicolas Pierron)</footer>
+  <h1 style="font-size:180%">Yet Another JavaScript Just-In-Time Compiler?</h1>
+    <footer>by @evilpies (Tom Schuster) and <br/> @nbp (Nicolas B. Pierron)</footer>
 </section>
 
 <section>
     <h3>SpiderMonkey in 2013</h3>
     <ul>
-        <li>an Interpreter
+        <li>an Interpreter based on Bytecode
         <li>two JITs (JägerMonkey + IonMonkey)
         <li>Type Inference (abrv. TI)
         <li>Ton of Runtime stuff
@@ -31,6 +31,8 @@
       <li>IonMonkey <em>(Firefox 18)</em>
     </ul>
 </section>
+
+
 
 <!--
 <section>
@@ -93,22 +95,21 @@ print(x<sub>3</sub>);
 
 
 <section>
-  <h3>Difference With JägerMonkey</h3>
+  <h3>Difference to JägerMonkey</h3>
   <ul>
     <li>One linear bytecode iteration.
     <li>Folded optimizations.
     <li>Optional use of Type Inference.
-    <li>Compile every possibilities.
+    <li>Compile every possibility.
   </ul>
 </section>
 
 <section>
-  <h3>Difference With TraceMonkey</h3>
+  <h3>Difference to TraceMonkey</h3>
   <ul>
     <li>Compile trace of execution.
-    <li>Assume one state is permanent.
+    <li>Specialized to recorded types.
     <li>Complex bailout system.
-    <li>Compile observed use cases.
   </ul>
 </section>
 
@@ -156,9 +157,29 @@ experimental branch</a></p>
     <li>Conditionnaly unbox Int32 inputs with SIMD.
     <li>Add Code Generator support.
     <li>Add Optim-hack-ing phase.
-    <li>Benchmark &amp; Demo
+    <li>Benchmark (187.1ms -> 149.1ms, 20%)
   </ul>
 </section>
+
+<section>
+  <h3>IonMonkey Pipeline</h3>
+  <img style="margin-left:20px" src="./Ionmonkey_overview.png" />
+</section>
+
+<!--
+<script type="text/javascript;version=1.8" src="main.js"></script>
+<script src="imaging-gaussian-blur-orig.js"></script>
+<script src="imaging-gaussian-blur.js"></script>
+<section>
+  <h3>Demo</h3>
+  <video style="margin-left:100px" id="v" width="320" height="240"></video>
+  <canvas id="c" width="320" height="240"></canvas>
+  <p><button onclick="Demo.start();">Start</button> —
+  <button onclick="Demo.blur = Demo.blurOrig;">Original</button> —
+  <button onclick="Demo.blur = Demo.blurNew;">Optimhacked</button>
+  </p>
+</section>
+-->
 
 <!--
 <section>
