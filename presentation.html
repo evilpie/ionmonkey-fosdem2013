@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 
 <meta charset="utf-8">
-<title>SpiderMonkey</title>
+<title>IonMonkey: YA-JS-JIT-C?</title>
 
 <section>
-    <h1>SpiderMonkey</h1>
-    <footer>by @evilpies (Tom Schuster) and <br/> @nbpname (Nicolas Pierron)</footer>
+  <h1>IonMonkey</h1>
+    <footer>by @evilpies (Tom Schuster) and <br/> @nbp (Nicolas B. Pierron)</footer>
+</section>
+
+<section>
+  <h1 style="font-size:180%">Yet Another JavaScript Just-In-Time Compiler?</h1>
+    <footer>by @evilpies (Tom Schuster) and <br/> @nbp (Nicolas B. Pierron)</footer>
 </section>
 
 <section>
     <h3>SpiderMonkey in 2013</h3>
     <ul>
-        <li>an Interpreter
+        <li>an Interpreter based on Bytecode
         <li>two JITs (JägerMonkey + IonMonkey)
         <li>Type Inference (abrv. TI)
         <li>Ton of Runtime stuff
@@ -20,14 +25,16 @@
 
 <section>
     <h3>Short history of JITs</h3>
-    <ul class="incremental">
+    <ul>
       <li>TraceMonkey <em>(Firefox 3.5 - Firefox 11)</em>
       <li>JägerMonkey <em>(Firefox 4, boosted in Firefox 9)</em>
       <li>IonMonkey <em>(Firefox 18)</em>
-      <li>New BaselineJIT <em>(<strong>Future Firefox</strong>)</em>
     </ul>
 </section>
 
+
+
+<!--
 <section>
   <h3>Type Inference</h3>
   <ul>
@@ -37,6 +44,7 @@
       <li>Create type sets and type barriers
   </ul>
 </section>
+-->
 
 <section>
   <h3>IonMonkey</h3>
@@ -46,6 +54,7 @@
       <li>SSA (Static Single Assignment)
       <li>Type specialized
       <li>Optimizations passes!
+  </ul>
 </section>
 
 <section>
@@ -57,11 +66,13 @@
   </ul>
 </section>
 
+
 <section>
+  <h3>Example: Input</h3>
 <pre>
 var y = 15;
 var x = y;
-if (x > 0) {
+if (x &gt; 0) {
   x = 2;
 }
 print(x);
@@ -69,10 +80,12 @@ print(x);
 </section>
 
 <section>
+  <h3>Example: Convert into SSA</h3>
 <pre>
 var y<sub>1</sub> = 15;
 var x<sub>1</sub> = y<sub>1</sub>;
-if (x<sub>1</sub> > 0) {
+var test = x<sub>1</sub> &gt; 0;
+if (test) {
   x<sub>2</sub> = 2;
 }
 x<sub>3</sub> = phi(x<sub>1</sub>, x<sub>2</sub>);
@@ -82,17 +95,151 @@ print(x<sub>3</sub>);
 
 
 <section>
+  <h3>Difference to JägerMonkey</h3>
+  <ul>
+    <li>One linear bytecode iteration.
+    <li>Folded optimizations.
+    <li>Optional use of Type Inference.
+    <li>Compile every possibility.
+  </ul>
+</section>
+
+<section>
+  <h3>Difference to TraceMonkey</h3>
+  <ul>
+    <li>Compile trace of execution.
+    <li>Specialized to recorded types.
+    <li>Complex bailout system.
+  </ul>
+</section>
+
+<section>
+  <h3>Again, Why IonMonkey?</h3>
+  <ul>
+    <li>SSA representation.
+    <li>Pluggable optimization. (GVN, LICM, Range analysis)
+    <li>Various register allocation algorithms.
+    <li>Compile most used cases.
+    <li>Prevent boxing.
+    <li>…
+  </ul>
+</section>
+
+<section>
+  <h3>So, the last one?</h3>
+  <ul>
+    <li>Baseline <em>(JägerMonkey replacement)</em>
+    <li>OdinMonkey <em>(for cross-compiled JavaScript)</em>
+  </ul>
+  <p>&nbsp;</p>
+  <p>All based on IonMonkey architecture.</p>
+</section>
+
+<section>
+  <h3>Can I touch it?</h3>
+  <p><a href="https://developer.mozilla.org/en-US/docs/SpiderMonkey/Hacking_Tips">SpiderMonkey Hacking Tips</a></p>
+  <ul>
+    <li>Add new assembly instructions. (SSE, AVX, …)
+    <li>Add new transformations. (Escape Analysis, Profile Guided Optimization, …)
+    <li>Add new back-end (PowerPC, GPU, …)
+  </ul>
+</section>
+
+<section>
+  <h3>Example: Single-Instruction Multiple-Data</h3>
+  <p>Goal: Improve image processing in JavaScript.</p>
+  <p><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=832718">Bug
+    832718</a> — <a
+  href="https://github.com/nbp/mozilla-central/branches/ionmonkey-fosdem-2013">Github
+experimental branch</a></p>
+  <ul>
+    <li>Add instruction set.
+    <li>Conditionnaly unbox Int32 inputs with SIMD.
+    <li>Add Code Generator support.
+    <li>Add Optim-hack-ing phase.
+    <li>Benchmark (187.1ms -> 149.1ms, 20%)
+  </ul>
+</section>
+
+<section>
+  <h3>IonMonkey Pipeline</h3>
+  <img style="margin-left:20px" src="./Ionmonkey_overview.png" />
+</section>
+
+<!--
+<script type="text/javascript;version=1.8" src="main.js"></script>
+<script src="imaging-gaussian-blur-orig.js"></script>
+<script src="imaging-gaussian-blur.js"></script>
+<section>
+  <h3>Demo</h3>
+  <video style="margin-left:100px" id="v" width="320" height="240"></video>
+  <canvas id="c" width="320" height="240"></canvas>
+  <p><button onclick="Demo.start();">Start</button> —
+  <button onclick="Demo.blur = Demo.blurOrig;">Original</button> —
+  <button onclick="Demo.blur = Demo.blurNew;">Optimhacked</button>
+  </p>
+</section>
+-->
+
+<!--
+<section>
+  <h3>Example: Constant propagation</h3>
 <pre>
 <del>var y<sub>1</sub> = 15</del>;
 var x<sub>1</sub> = <span style="color:red;">15</span>;
-<del>if (x<sub>1</sub> > 0) {
+var test = <span style="color:red">true</span>;
+<del>if (test)</del> {
   x<sub>2</sub> = 2;
 }
-x<sub>3</sub> = phi(x<sub>1</sub>, x<sub>2</sub>);</del>
-print(<span style="color:red;">x<sub>1</sub></span>);
+x<sub>3</sub> = <del>phi(x<sub>1</sub>,</del> x<sub>2</sub><del>)</del>;
+print(<span style="color:red">2</span>);
 </pre>
 </section>
 
+<section>
+  <h3>Example: Dead code elimination</h3>
+<pre>
+<del>var x<sub>1</sub> = 15</del>;
+<del>var test = true</del>;
+{
+  <del>x<sub>2</sub> = 2</del>;
+}
+<del>x<sub>3</sub> = x<sub>2</sub></del>;
+print(2);
+</pre>
+</section>
+
+<section>
+  <h3>Image processing example</h3>
+<pre>
+for (var x = 0; x &lt; height; x++) {
+  for (var y = 0; y &lt; width; y++) {
+    bmp[x * width + y + 0] *= coef;
+    bmp[x * width + y + 1] *= coef;
+    bmp[x * width + y + 2] *= coef;
+    bmp[x * width + y + 3] *= coef;
+  }
+}
+</pre>
+</section>
+
+
+<section>
+  <h3>Example: Loop Invariant code motion</h3>
+<pre>
+for (var x = 0; x &lt; height; x++) {
+  var tmp<sub>1</sub> = <span style="color:red">x * width</span>;
+  for (var y = 0; y &lt; width; y++) {
+    var tmp<sub>2</sub> = <span style="color:red">tmp<sub>1</sub> + y</span>;
+    bmp[<span style="color:red">tmp<sub>2</sub></span>] *= coef;
+    bmp[<span style="color:red">tmp<sub>2</sub></span> + 1] *= coef;
+    bmp[<span style="color:red">tmp<sub>2</sub></span> + 2] *= coef;
+    bmp[<span style="color:red">tmp<sub>2</sub></span> + 3] *= coef;
+  }
+}
+</pre>
+</section>
+-->
 
 <!-- Your Style -->
 <!-- Define the style of your presentation -->
@@ -133,16 +280,16 @@ print(<span style="color:red;">x<sub>1</sub></span>);
   }
 
   ul {
-      margin: 50px 200px;
+      margin: 0px 50px 0px 150px;
   }
 
   p {
-    margin: 75px;
-    font-size: 50px;
+    margin: 0 50px 0 150px;
+    // font-size: 50px;
   }
 
   pre, code {
-    margin: 200px 200px;
+    margin: 0 50px 0 150px;
   }
 
   blockquote {
